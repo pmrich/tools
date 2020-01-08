@@ -1,0 +1,202 @@
+Summary:
+
+The below will create 6 hosts.  A django webserver, a database, one actor_a
+node, one actor_b node, two actor_c nodes.  Once started, the actor_a node
+will start trying to create actors with required capabilities, but they don't
+exist on actor_a, but it does on actor_b and actor_c.  Once it successfully
+creates the actors, it starts sending them messages.
+
+Problems:
+
+For some reason, actor_a fails to create the actor on actor_c, but is
+successful creating it on actor_b.  This will need to be looked into.
+
+
+Output:
+
+>>>docker-compose build && docker-compose up --scale actor_a=1 --scale actor_b=1 --scale actor_c=2
+WARNING: The AGENT_NUMBER variable is not set. Defaulting to a blank string.
+db uses an image, skipping
+Building web
+Step 1/7 : FROM python:3
+ ---> 0a3a95c81a2b
+Step 2/7 : ENV PYTHONUNBUFFERED 1
+ ---> Using cache
+ ---> 1bb13b863f81
+Step 3/7 : RUN apt-get update &&        apt-get -y install strace sudo &&       mkdir /code
+ ---> Using cache
+ ---> b29ef3c648a9
+Step 4/7 : WORKDIR /code
+ ---> Using cache
+ ---> 10909c716a8a
+Step 5/7 : COPY requirements.txt /code/
+ ---> Using cache
+ ---> c702feecab05
+Step 6/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> feab3e8141e7
+Step 7/7 : COPY . /code/
+ ---> 92d7c8cb8922
+Successfully built 92d7c8cb8922
+Successfully tagged docker_web:latest
+Building actor_a
+Step 1/7 : FROM python:3
+ ---> 0a3a95c81a2b
+Step 2/7 : ENV PYTHONUNBUFFERED 1
+ ---> Using cache
+ ---> 1bb13b863f81
+Step 3/7 : RUN apt-get update &&        apt-get -y install strace sudo &&       mkdir /code
+ ---> Using cache
+ ---> b29ef3c648a9
+Step 4/7 : WORKDIR /code
+ ---> Using cache
+ ---> 10909c716a8a
+Step 5/7 : COPY requirements.txt /code/
+ ---> Using cache
+ ---> c702feecab05
+Step 6/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> feab3e8141e7
+Step 7/7 : COPY . /code/
+ ---> Using cache
+ ---> 92d7c8cb8922
+Successfully built 92d7c8cb8922
+Building actor_b
+Successfully tagged docker_actor_a:latest
+Step 1/7 : FROM python:3
+ ---> 0a3a95c81a2b
+Step 2/7 : ENV PYTHONUNBUFFERED 1
+ ---> Using cache
+ ---> 1bb13b863f81
+Step 3/7 : RUN apt-get update &&        apt-get -y install strace sudo &&       mkdir /code
+ ---> Using cache
+ ---> b29ef3c648a9
+Step 4/7 : WORKDIR /code
+ ---> Using cache
+ ---> 10909c716a8a
+Step 5/7 : COPY requirements.txt /code/
+ ---> Using cache
+ ---> c702feecab05
+Step 6/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> feab3e8141e7
+Step 7/7 : COPY . /code/
+ ---> Using cache
+ ---> 92d7c8cb8922
+Successfully built 92d7c8cb8922
+Successfully tagged docker_actor_b:latest
+Building actor_c
+Step 1/7 : FROM python:3
+ ---> 0a3a95c81a2b
+Step 2/7 : ENV PYTHONUNBUFFERED 1
+ ---> Using cache
+ ---> 1bb13b863f81
+Step 3/7 : RUN apt-get update &&        apt-get -y install strace sudo &&       mkdir /code
+ ---> Using cache
+ ---> b29ef3c648a9
+Step 4/7 : WORKDIR /code
+ ---> Using cache
+ ---> 10909c716a8a
+Step 5/7 : COPY requirements.txt /code/
+ ---> Using cache
+ ---> c702feecab05
+Step 6/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> feab3e8141e7
+Step 7/7 : COPY . /code/
+ ---> Using cache
+ ---> 92d7c8cb8922
+Successfully built 92d7c8cb8922
+Successfully tagged docker_actor_c:latest
+WARNING: The AGENT_NUMBER variable is not set. Defaulting to a blank string.
+WARNING: Found orphan containers (docker_actor_1, docker_actor_2) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+Recreating docker_actor_c_1 ... done
+Recreating docker_actor_c_2 ... done
+Starting docker_db_1        ... done
+Recreating docker_actor_a_1 ... done
+Recreating docker_actor_b_1 ... done
+Recreating docker_web_1     ... done
+Attaching to docker_db_1, docker_actor_b_1, docker_actor_c_1, docker_actor_c_2, docker_actor_a_1, docker_web_1
+db_1       |
+db_1       | PostgreSQL Database directory appears to contain a database; Skipping initialization
+db_1       |
+db_1       | 2020-01-08 15:06:20.822 UTC [1] LOG:  starting PostgreSQL 12.1 (Debian 12.1-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
+actor_c_1  | INFO:root:++++ Actor System gen (3, 9) started, admin @ ActorAddr-(T|:10001)
+actor_b_1  | INFO:root:++++ Actor System gen (3, 9) started, admin @ ActorAddr-(T|:10001)
+db_1       | 2020-01-08 15:06:20.854 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db_1       | 2020-01-08 15:06:20.854 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+actor_c_2  | INFO:root:++++ Actor System gen (3, 9) started, admin @ ActorAddr-(T|:10001)
+actor_c_2  | INFO:root:Compute Node system started.
+actor_b_1  | INFO:root:Service Node system started.
+actor_a_1  | INFO:root:++++ Actor System gen (3, 9) started, admin @ ActorAddr-(T|:1900)
+db_1       | 2020-01-08 15:06:20.885 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+actor_c_1  | INFO:root:Compute Node system started.
+db_1       | 2020-01-08 15:06:20.949 UTC [26] LOG:  database system was shut down at 2020-01-03 21:50:29 UTC
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - __init__     :L#25:2020-01-08 15:06:21,019>>>Ignition started
+db_1       | 2020-01-08 15:06:20.987 UTC [1] LOG:  database system is ready to accept connections
+actor_a_1  | INFO:root:Igniting the system!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#31:2020-01-08 15:06:21,021>>>waiting for the system to start to create actors
+web_1      | Watching for file changes with StatReloader
+web_1      | Performing system checks...
+web_1      |
+web_1      | System check identified no issues (0 silenced).
+web_1      |
+web_1      | You have 17 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
+web_1      | Run 'python manage.py migrate' to apply them.
+web_1      | January 08, 2020 - 15:06:22
+web_1      | Django version 2.2.9, using settings 'composeexample.settings'
+web_1      | Starting development server at http://0.0.0.0:8000/
+web_1      | Quit the server with CONTROL-C.
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#42:2020-01-08 15:06:21,022>>>created actor <class 'actors.Actor_Compute'>:cn
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#42:2020-01-08 15:06:21,022>>>created actor <class 'actors.Actor_ServiceNode'>:sn
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:21,023>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:22,025>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:23,028>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:24,030>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:25,033>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,127>>>ServiceNode Received:HI!
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,133>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:26,036>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:27,040>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,142>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:28,043>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:29,046>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,150>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:30,049>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,158>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:31,052>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:32,055>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,163>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:33,057>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:34,059>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,169>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:35,064>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,174>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:36,067>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:37,071>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,179>>>ServiceNode Received:HI!
+actor_a_1  | actors.Actor_Ignition - ERROR - ActorAddr-(T|:44203) - _pendingActorResponse:L#381:2020-01-08 15:06:38,078>>>Pending Actor create for ActorAddr-(T|:44203) failed (3586):
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:38,080>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:43,183>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:39,089>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:46,203>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:40,098>>>sending messages to actors
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:41,105>>>sending messages to actors
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:49,223>>>ServiceNode Received:HI!
+actor_a_1  | root - INFO - ActorAddr-(T|:44203) - receiveMsg_str:L#52:2020-01-08 15:06:42,121>>>sending messages to actors
+actor_a_1  | root - ERROR - ActorAddr-(T|:44203) - receiveMsg_str:L#57:2020-01-08 15:06:43,137>>>received unknown ServiceNode Received:HI!
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:51,234>>>ServiceNode Received:HI!
+actor_a_1  | root - ERROR - ActorAddr-(T|:44203) - receiveMsg_str:L#57:2020-01-08 15:06:43,146>>>received unknown ServiceNode Received:HI!
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:53,251>>>ServiceNode Received:HI!
+actor_a_1  | root - ERROR - ActorAddr-(T|:44203) - receiveMsg_str:L#57:2020-01-08 15:06:43,155>>>received unknown ServiceNode Received:HI!
+actor_a_1  | root - ERROR - ActorAddr-(T|:44203) - receiveMsg_str:L#57:2020-01-08 15:06:43,161>>>received unknown ServiceNode Received:HI!
+actor_b_1  | root - INFO - ActorAddr-(T|:34685) - receiveMsg_str:L#67:2020-01-08 15:06:55,268>>>ServiceNode Received:HI!
+actor_a_1  | root - ERROR - ActorAddr-(T|:44203) - receiveMsg_str:L#57:2020-01-08 15:06:43,166>>>received unknown ServiceNode Received:HI!
+^CGracefully stopping... (press Ctrl+C again to force)
+Stopping docker_web_1       ... done
+Stopping docker_actor_a_1   ... done
+Stopping docker_actor_b_1   ... done
+Stopping docker_actor_c_2   ... done
+Stopping docker_actor_c_1   ... done
+Stopping docker_db_1        ... done
+

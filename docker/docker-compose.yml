@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+    db:
+        image: postgres
+    web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/code
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+    actor_a:
+        build: .
+        # these two options, security_opt and cap_add allows strace in a container.
+        security_opt:
+            - seccomp:unconfined
+        cap_add:
+            - SYS_PTRACE
+        command: python node_a.py MASTER
+        restart: always
+        environment:
+            AGENT_NUMBER: ${AGENT_NUMBER}
+        networks:
+            actor_net:
+                ipv4_address: 172.28.0.69
+    actor_b:
+        build: .
+        security_opt:
+            - seccomp:unconfined
+        cap_add:
+            - SYS_PTRACE
+        command: python node_b.py MASTER
+        restart: always
+        environment:
+            AGENT_NUMBER: ${AGENT_NUMBER}
+        networks:
+            - actor_net
+    actor_c:
+        build: .
+        security_opt:
+            - seccomp:unconfined
+        cap_add:
+            - SYS_PTRACE
+        command: python node_c.py MASTER
+        restart: always
+        environment:
+            AGENT_NUMBER: ${AGENT_NUMBER}
+        networks:
+            - actor_net
+
+
+networks:
+    actor_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.28.0.0/16

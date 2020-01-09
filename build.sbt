@@ -1,3 +1,10 @@
+/*
+Refer to https://alvinalexander.com/scala/sbt-how-to-use-build.scala-instead-of-build.sbt
+to replace build.sbt with Build.scala
+ */
+
+sbtPlugin := true
+
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 resolvers += "zenaptix at bintray" at "http://dl.bintray.com/zenaptix/rx_zmq_streams"
@@ -100,7 +107,8 @@ dockerfile in docker := {
   new Dockerfile {
     from("openjdk:8-jre")
     entryPoint(s"$targetDir/bin/${executableScriptName.value}")
-    copy(appDir, targetDir, chown = "daemon:daemon")
+    copy(appDir, targetDir)//, chown = "daemon:daemon")
   }
 }
+buildOptions in docker := BuildOptions(cache = false)
 fork in run := true

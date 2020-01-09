@@ -1,0 +1,19 @@
+Examples of various python and scala applications.
+
+folder structure:
+	build.sbt - used to build the scala programs and a sbt docker image
+	project/
+		plugins.sbt - plugins required for the sbt docker image
+    docker/
+        python thespian example with docker images using docker-compose
+        different image than the one controlled by sbt.
+        django website included in the image
+    src/main/
+        python/
+            portping.py - ping a port by connecting to it with a 4 second timeout.
+        scala/Tools/
+            Node.scala - simple program that prints "Node"
+
+Docker: To run the docker image, build the image and run it.
+	sbt docker
+	docker run -i tools/tools

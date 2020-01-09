@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-import sys
 import socket
+import sys
+
 socket.setdefaulttimeout(4)
 
 if __name__ == "__main__":
-    try:    
+    try:
         print("socket.gethostname() -> {%s}" % socket.gethostname())
         print("socket.getfqdn() -> {%s}" % socket.getfqdn())
     except:
@@ -14,14 +15,11 @@ if __name__ == "__main__":
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         result = s.connect((host, port))
-        #result = s.connect_ex((host, port))
+        # result = s.connect_ex((host, port))
     except Exception as err:
         print("Error connecting to {%s}:{%s}" % (host, port))
         raise err
     else:
         print("Connected to {%s}:{%s}" % (host, port))
     finally:
-        #print(f"result:{result}")
         s.close()
-
-    

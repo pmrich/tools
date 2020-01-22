@@ -40,6 +40,12 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test
 )
+libraryDependencies ++= Seq(
+  "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap" % "1.0.5",
+  "com.lightbend.akka.management" %% "akka-management-cluster-http" % "1.0.5",
+  "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.5",
+  "com.typesafe.akka" %% "akka-discovery" % akkaVersion
+)
 
 libraryDependencies ++= Seq(
   "com.lightbend.akka" %% "akka-stream-alpakka-amqp" % alpakkaVersion,
@@ -68,8 +74,8 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.3" exclude("org
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3"
 
 enablePlugins(PackPlugin)
-packMain := Map("Dragon" -> "Tools.Node")
-mainClass in (Compile, run) := Some("Tools.Node")
+packMain := Map("Tools" -> "Tools.Ignition")
+mainClass in (Compile, run) := Some("Tools.Ignition")
 
 packJvmOpts := Map("Tools" -> Seq(
   "-Xmx512m"
@@ -99,6 +105,7 @@ scalacOptions ++= Seq(
 )
 
 enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
+dockerExposedPorts in Docker := Seq(9000, 8558, 8080, 31771)
 
 dockerfile in docker := {
   val appDir: File = stage.value

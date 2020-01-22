@@ -17,3 +17,34 @@ folder structure:
 Docker: To run the docker image, build the image and run it.
 	sbt docker
 	docker run -i tools/tools
+
+Minikube(Bash): To run Akka in kubernetes, run the below.
+	minikube start --memory 4gb
+	eval $(minikube docker-env)
+	sbt docker:publishLocal
+	kubectl apply -f k8s/simple-cluster-rbac.yml
+	kubectl apply -f k8s/simple-cluster-deployment.yml
+	kubectl apply -f k8s/simple-cluster-service.yml
+	KUBE_IP=$(minikube ip)
+	MANAGEMENT_PORT=$(kubectl get svc akka-simple-cluster -ojsonpath="{.spec.ports[?(@.name==\"management\")].nodePort}")
+	echo $KUBE_IP $MANAGEMENT_PORT
+    curl http://$KUBE_IP:$MANAGEMENT_PORT/cluster/members | jq
+
+
+Minikube(Xonsh): To run Akka in kubernetes, run the below.
+	minikube start --memory 4gb
+	minikube docker-env - > /tmp/minikube_docker-env
+    source-bash /tmp/minikube_docker-env
+	sbt docker:publishLocal
+	kubectl apply -f k8s/simple-cluster-rbac.yml
+	kubectl apply -f k8s/simple-cluster-deployment.yml
+	kubectl apply -f k8s/simple-cluster-service.yml
+	$KUBE_IP=$(minikube ip).strip()
+	$MANAGEMENT_PORT=$(kubectl get svc akka-simple-cluster -ojsonpath='{.spec.ports[?(@.name=="management")].nodePort}').strip('\'')
+	echo $KUBE_IP $MANAGEMENT_PORT
+    curl http://$KUBE_IP:$MANAGEMENT_PORT/cluster/members | jq
+
+Watching the cluster:
+	kubectl get all --all-namespaces
+	#then use one of the akka-simple-cluster to watch the log
+	kubectl -n default logs pod/akka-simple-cluster-cb8dd844b-6c4v5 -f
